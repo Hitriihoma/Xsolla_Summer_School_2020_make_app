@@ -1,2 +1,5 @@
-# Xsolla_Summer_School_2020_make_app
- 
+# customer-service category prediction
+Tool to auto category detection
+
+
+up
