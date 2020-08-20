@@ -45,7 +45,7 @@ def registration():
         json_params = json.loads(getData) 
         
         #напишите прогноз и верните его в ответе в параметре 'prediction'
-    return "predction: 1"
+
 
 
         
