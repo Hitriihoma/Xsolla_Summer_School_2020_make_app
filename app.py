@@ -1,5 +1,5 @@
-import lightgbm as lgb
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 import pandas as pd
 import pickle
@@ -19,12 +19,12 @@ import traceback
 application = Flask(__name__)
 
 
-#загружаем модели из файла
+#load models from file
 vec = pickle.load(open("./models/tfidf.pickle", "rb"))
-model = lgb.Booster(model_file='./models/lgbm_model.txt')
+model = pickle.load(open("./models/MLPClassifier_model.pickle", "rb"))
 
 
-# тестовый вывод
+# test output
 @application.route("/")  
 def hello():
     resp = {'message':"Hello World!"}
@@ -33,7 +33,21 @@ def hello():
     
     return response
 
-# предикт категории
+'''
+prediction of category
+Input: {"user_message":"example123rfssg gsfgfd"}
+Output: {
+    "category": -1,
+    "message": "ok",
+    "prediciton": [
+        [
+            0.04927693250080478,
+            0.44692604628460875,
+            0.5037970212145865
+        ]
+    ]
+}
+''' 
 @application.route("/categoryPrediction" , methods=['GET', 'POST'])  
 def registration():
     resp = {'message':'ok'
@@ -44,10 +58,9 @@ def registration():
         getData = request.get_data()
         json_params = json.loads(getData) 
         
-        #напишите прогноз и верните его в ответе в параметре 'prediction'
-
-
-
+        #make prediction. return in parameter 'prediction'
+        prediction = model.predict_proba(vec.transform([json_params['user_message']]).toarray()).tolist()
+        resp['prediciton'] = prediction
         
     except Exception as e: 
         print(e)
