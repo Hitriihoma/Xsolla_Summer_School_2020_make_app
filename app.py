@@ -11,6 +11,8 @@ from flask import Flask
 from flask import request
 import requests
 from flask import jsonify
+import threading
+import atexit
 
 import os
 import json
@@ -18,7 +20,9 @@ from ast import literal_eval
 import traceback
 
 app = Flask(__name__)
-
+POOL_TIME = 3 #Seconds
+yourThread = threading.Thread()
+dataLock = threading.Lock()
 
 #load models from file
 vec = pickle.load(open("./models/tfidf.pickle", "rb"))
@@ -29,8 +33,9 @@ model = pickle.load(open("./models/MLPClassifier_model.pickle", "rb"))
 @app.route("/")  
 def hello():
     resp = {'message':"Hello World!"}
-    
+    global yourThread
     response = jsonify(resp)
+    yourThread = threading.Timer(POOL_TIME, registration, ())
     
     return response
 
@@ -51,6 +56,7 @@ Output: {
 ''' 
 @app.route("/categoryPrediction" , methods=['GET', 'POST'])  
 def registration():
+    global yourThread
     resp = {'message':'ok'
            ,'category': -1
            }
@@ -66,9 +72,11 @@ def registration():
     except Exception as e: 
         print(e)
         resp['message'] = e
+        resp['prediciton'] = [[0,0,0]]
       
     response = jsonify(resp)
-    
+    yourThread = threading.Timer(POOL_TIME, registration, ())
+    yourThread.start()   
     return response
 
         
