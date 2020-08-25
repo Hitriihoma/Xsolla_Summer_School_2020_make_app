@@ -1,1 +1,1 @@
-web: gunicorn = gunicorn -w 3 app.py
+web: gunicorn = gunicorn -w 3 app:application
