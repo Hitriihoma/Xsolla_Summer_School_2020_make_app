@@ -17,7 +17,7 @@ import json
 from ast import literal_eval
 import traceback
 
-application = Flask(__name__)
+app = Flask(__name__)
 
 
 #load models from file
@@ -26,7 +26,7 @@ model = pickle.load(open("./models/MLPClassifier_model.pickle", "rb"))
 
 
 # test output
-@application.route("/")  
+@app.route("/")  
 def hello():
     resp = {'message':"Hello World!"}
     
@@ -49,7 +49,7 @@ Output: {
     ]
 }
 ''' 
-@application.route("/categoryPrediction" , methods=['GET', 'POST'])  
+@app.route("/categoryPrediction" , methods=['GET', 'POST'])  
 def registration():
     resp = {'message':'ok'
            ,'category': -1
@@ -75,7 +75,7 @@ def registration():
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
-    application.run(debug=False, port=port, host='0.0.0.0' , threaded=True)
+    app.run(debug=False, port=port, host='0.0.0.0' , threaded=True)
 
 
 
